@@ -1,27 +1,40 @@
 import argparse
+import sys
 import os
+
+def c(args): #step 1
+    return os.stat(args).st_size
+
+def l(args): #step 2
+    file = open(args, encoding='utf8')
+    lines = file.readlines()
+    return len(lines)
+
+def w(args): #step 3
+    count = 0
+    file = open(args, encoding='utf8')
+    for line in file:
+        for word in line.split():
+            count += 1
+    return count
+
+def m(args): #step 4
+    file = open(args, encoding='utf8')
+    file = file.read()
+    count = 0
+    for line in file:
+        count += len(line)
+    return count
+
+#I did not do step 5 because I am on windows and not sure how to replicate the linux cat command in cmd.
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Reads a single Bitcoin block from disk and displays its header.', epilog='', formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('-c', type=str, help='wc tool -c command', required=False)
-    parser.add_argument('-l', type=str, help='wc tool -l command', required=False)
-    parser.add_argument('-w', type=str, help='wc tool -w command', required=False)
-    parser.add_argument('-m', type=str, help='wc tool -m command', required=False)
-    #parser.add_argument('--hash', type=bytes, help='hash of the desired block', required=True)
-    args = parser.parse_args()
-    if args.c:
-        print(os.stat(args.c).st_size, args.c)
-    if args.l:
-        file = open(args.l, encoding='utf8')
-        lines = file.readlines()
-        print(len(lines), args.l)
-    if args.w:
-        count = 0
-        file = open(args.w, encoding='utf8')
-        for line in file:
-            for word in line.split():
-                count += 1
-        print(count)
-    if args.m: #output depends on locale
-        file = open(args.m, encoding='utf8')
-        file = file.read()
-        print(len(file))
+    if '-c' in sys.argv:
+        print(c(sys.argv[2]), sys.argv[2])
+    if '-l' in sys.argv:
+        print(l(sys.argv[2]), sys.argv[2])
+    if '-w' in sys.argv:
+        print(w(sys.argv[2]), sys.argv[2])
+    if '-m' in sys.argv: #output depends on locale
+        print(m(sys.argv[2]), sys.argv[2])
+    if len(sys.argv) == 2:
+        print(c(sys.argv[1]), l(sys.argv[1]), w(sys.argv[1]), sys.argv[1])
