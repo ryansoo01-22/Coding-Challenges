@@ -53,6 +53,7 @@ def make_tree_test(sorted_nodes):
     print("test")
 
 def step_two_testing():
+    '''using this example to make the tree https://opendsa-server.cs.vt.edu/ODSA/Books/CS3/html/Huffman.html'''
     test_list = []
     test_list.append(Node("C", 32))
     test_list.append(Node("D", 42))
