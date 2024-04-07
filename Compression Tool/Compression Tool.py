@@ -100,8 +100,20 @@ def step_three_test(tree):
     #NEED TO MAKE LOOKUP TABLE
     
 if __name__ == "__main__":
-    step_two_tree = step_two_testing()
-    step_three_test(step_two_tree)
+    #step_two_tree = step_two_testing()
+    #step_three_test(step_two_tree)
+    test = []
+    test.append(["C", 1110])
+    test.append(["D", 101])
+    test.append(["E", 0])
+    test.append(["M", 11111])
+    test.append(["Z", 111100])
+    test.append(["K", 111101])
+    test.append(["U", 100])
+    test.append(["L", 110])
+    test.sort()
+    for i in test:
+        print(i)
 
 
 
