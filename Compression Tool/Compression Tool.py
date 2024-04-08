@@ -86,23 +86,36 @@ def step_two_testing():
     test_list.sort()
     return make_tree_test(test_list)
 
-def inorder_traversal(root):
+def inorder_traversal(root, root_val, code, lookup_table):
     if root:
-        inorder_traversal(root.left)
+        if root.left:
+            code.append("0")
+            inorder_traversal(root.left, root_val, code, lookup_table)
+            code.pop()
 
         if root.data:
-            print(root.data)
-
-        inorder_traversal(root.right)
+            print(root.data, code)
+            lookup_table.append([root.data, ''.join(code)])
+        
+        if root.right:
+            code.append("1")
+            inorder_traversal(root.right, root_val, code, lookup_table)
+            code.pop()
 
 def step_three_test(tree):
-    inorder_traversal(tree.root)
-    #NEED TO MAKE LOOKUP TABLE
+    root_val = tree.root.weight
+    code = []
+    lookup_table = []
+    inorder_traversal(tree.root, root_val, code, lookup_table)
+    lookup_table.sort()
+    for i in lookup_table:
+        print(i)
+    
     
 if __name__ == "__main__":
-    #step_two_tree = step_two_testing()
-    #step_three_test(step_two_tree)
-    test = []
+    step_two_tree = step_two_testing()
+    step_three_test(step_two_tree)
+    '''test = []
     test.append(["C", 1110])
     test.append(["D", 101])
     test.append(["E", 0])
@@ -113,7 +126,7 @@ if __name__ == "__main__":
     test.append(["L", 110])
     test.sort()
     for i in test:
-        print(i)
+        print(i)'''
 
 
 
