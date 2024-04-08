@@ -86,35 +86,54 @@ def step_two_testing():
     test_list.sort()
     return make_tree_test(test_list)
 
-def inorder_traversal(root, root_val, code, lookup_table):
+def inorder_traversal(root):
+    if root:
+        if root.left:
+            inorder_traversal(root.left)
+
+        if root.data:
+            print(root.data)
+        
+        if root.right:
+            inorder_traversal(root.right)
+
+def make_lookup_table(root, root_val, code, lookup_table):
     if root:
         if root.left:
             code.append("0")
-            inorder_traversal(root.left, root_val, code, lookup_table)
+            make_lookup_table(root.left, root_val, code, lookup_table)
             code.pop()
 
         if root.data:
-            print(root.data, code)
-            lookup_table.append([root.data, ''.join(code)])
+            #print(root.data, code)
+            lookup_table[root.data] = ''.join(code)
+            #lookup_table.append([root.data, ''.join(code)])
         
         if root.right:
             code.append("1")
-            inorder_traversal(root.right, root_val, code, lookup_table)
+            make_lookup_table(root.right, root_val, code, lookup_table)
             code.pop()
 
 def step_three_test(tree):
     root_val = tree.root.weight
     code = []
-    lookup_table = []
-    inorder_traversal(tree.root, root_val, code, lookup_table)
-    lookup_table.sort()
+    lookup_table = {}
+    make_lookup_table(tree.root, root_val, code, lookup_table)
     for i in lookup_table:
+        print(i, lookup_table[i])
+    return lookup_table
+
+def step_four_test():
+    sorted_freqs = step_one()
+    for i in sorted_freqs:
         print(i)
-    
+    #write those to header of compressed file. make sure to add way of knowing when header ends and compressed begins.
     
 if __name__ == "__main__":
-    step_two_tree = step_two_testing()
-    step_three_test(step_two_tree)
+    sorted_freqs = step_one()
+    huffman_tree = make_tree_test(sorted_freqs)
+    step_three_test(huffman_tree)
+    step_four_test()
     '''test = []
     test.append(["C", 1110])
     test.append(["D", 101])
