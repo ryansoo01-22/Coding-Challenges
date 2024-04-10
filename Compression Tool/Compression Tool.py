@@ -119,21 +119,26 @@ def step_three_test(tree):
     code = []
     lookup_table = {}
     make_lookup_table(tree.root, root_val, code, lookup_table)
-    for i in lookup_table:
-        print(i, lookup_table[i])
     return lookup_table
 
-def step_four_test():
+def step_four():
     sorted_freqs = step_one()
-    for i in sorted_freqs:
-        print(i)
-    #write those to header of compressed file. make sure to add way of knowing when header ends and compressed begins.
+    with open("compressed.txt", 'w') as f:
+        f.write("--HEADER START--\n\n")
+        for i in sorted_freqs:
+            f.write(str(i))
+            f.write("\n")
+        f.write("\n--HEADER END--\n\n")
+
+def step_5():
+    pass
+    #DO NEXT TIME put lookup table into dictionary for easy access of letters when compressing.
     
 if __name__ == "__main__":
     sorted_freqs = step_one()
     huffman_tree = make_tree_test(sorted_freqs)
     step_three_test(huffman_tree)
-    step_four_test()
+    step_four()
     '''test = []
     test.append(["C", 1110])
     test.append(["D", 101])
