@@ -1,4 +1,5 @@
 import collections
+import struct
 
 def step_one():
     with open('135-0.txt', 'r', encoding='utf-8') as f:
@@ -106,7 +107,7 @@ def make_lookup_table(root, root_val, code, lookup_table):
 
         if root.data:
             #print(root.data, code)
-            lookup_table[root.data] = ''.join(code)
+            lookup_table[root.data] = ''.join(code).encode('utf-8')
             #lookup_table.append([root.data, ''.join(code)])
         
         if root.right:
@@ -114,7 +115,7 @@ def make_lookup_table(root, root_val, code, lookup_table):
             make_lookup_table(root.right, root_val, code, lookup_table)
             code.pop()
 
-def step_three_test(tree):
+def step_three(tree):
     root_val = tree.root.weight
     code = []
     lookup_table = {}
@@ -130,15 +131,28 @@ def step_four():
             f.write("\n")
         f.write("\n--HEADER END--\n\n")
 
-def step_5():
-    pass
-    #DO NEXT TIME put lookup table into dictionary for easy access of letters when compressing.
+def step_5(lookup_table):
+    compressed = b''
+    with open('135-0.txt', 'r', encoding='utf-8') as f:
+        full_text = f.read()
+        for i in full_text:
+            if i == " ":
+                compressed += b" "
+                continue
+            if i in lookup_table:
+                compressed += struct.pack(bytes(lookup_table[i]), 2)   
+    with open("compressed.txt", 'ab') as c:
+        c.write(compressed)
+    c.close()
+            
+    #DO NEXT TIME figure out how to compress bit strings
     
 if __name__ == "__main__":
     sorted_freqs = step_one()
     huffman_tree = make_tree_test(sorted_freqs)
-    step_three_test(huffman_tree)
+    lookup_table = step_three(huffman_tree)
     step_four()
+    step_5(lookup_table)
     '''test = []
     test.append(["C", 1110])
     test.append(["D", 101])
