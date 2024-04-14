@@ -1,5 +1,6 @@
 import collections
-import struct
+import gzip
+import base64
 
 def step_one():
     with open('135-0.txt', 'r', encoding='utf-8') as f:
@@ -133,14 +134,16 @@ def step_four():
 
 def step_5(lookup_table):
     compressed = b''
-    with open('135-0.txt', 'r', encoding='utf-8') as f:
+    with open('compressed.txt', 'r') as f:
         full_text = f.read()
         for i in full_text:
             if i == " ":
                 compressed += b" "
                 continue
             if i in lookup_table:
-                compressed += struct.pack(bytes(lookup_table[i]), 2)   
+                compressed_str = gzip.compress(lookup_table[i])
+                encoded_compressed = base64.b64encode(compressed_str)
+                compressed += encoded_compressed
     with open("compressed.txt", 'ab') as c:
         c.write(compressed)
     c.close()
