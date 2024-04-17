@@ -141,14 +141,15 @@ def step_5(lookup_table):
                 compressed += b" "
                 continue
             if i in lookup_table:
-                compressed_str = gzip.compress(lookup_table[i])
-                encoded_compressed = base64.b64encode(compressed_str)
-                compressed += encoded_compressed
+                compressed_str = bytes(lookup_table[i])
+                compressed += compressed_str
+    for i in compressed:
+        print("COMPRESSED I IS", str(i))
     with open("compressed.txt", 'ab') as c:
         c.write(compressed)
     c.close()
             
-    #DO NEXT TIME figure out how to compress bit strings
+    #DO NEXT TIME figure out how to compress bit strings into bytes
     
 if __name__ == "__main__":
     sorted_freqs = step_one()
