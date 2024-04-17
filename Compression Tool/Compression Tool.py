@@ -1,5 +1,5 @@
 import collections
-import gzip
+import zlib
 import base64
 
 def step_one():
@@ -134,22 +134,22 @@ def step_four():
 
 def step_5(lookup_table):
     compressed = b''
-    with open('compressed.txt', 'r') as f:
+    with open('135-0.txt', 'r', encoding='utf-8') as f:
         full_text = f.read()
         for i in full_text:
             if i == " ":
                 compressed += b" "
                 continue
             if i in lookup_table:
-                compressed_str = bytes(lookup_table[i])
-                compressed += compressed_str
+                compressed += zlib.compress(lookup_table[i])
     for i in compressed:
-        print("COMPRESSED I IS", str(i))
+        print("COMPRESSED I IS", i)
     with open("compressed.txt", 'ab') as c:
         c.write(compressed)
     c.close()
             
-    #DO NEXT TIME figure out how to compress bit strings into bytes
+    #DO NEXT TIME figure out how to compress bit strings into bytes 
+    #TRY USING SMALLER FILE TO TEST COMPRESSION/DECOMPRESSION
     
 if __name__ == "__main__":
     sorted_freqs = step_one()
