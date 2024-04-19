@@ -1,9 +1,9 @@
 import collections
-import zlib
+import struct
 import base64
 
 def step_one():
-    with open('135-0.txt', 'r', encoding='utf-8') as f:
+    with open('test.txt', 'r', encoding='utf-8') as f:
         text = f.read()
         letter_freqs = {}
         for c in text:
@@ -134,29 +134,46 @@ def step_four():
 
 def step_5(lookup_table):
     compressed = b''
-    with open('135-0.txt', 'r', encoding='utf-8') as f:
+    with open('test.txt', 'r', encoding='utf-8') as f:
         full_text = f.read()
         for i in full_text:
             if i == " ":
                 compressed += b" "
                 continue
             if i in lookup_table:
-                compressed += zlib.compress(lookup_table[i])
-    for i in compressed:
-        print("COMPRESSED I IS", i)
+                byte_value = int(lookup_table[i], 2).to_bytes((len(lookup_table[i]) + 7) // 8, byteorder='big')
+                compressed += byte_value
     with open("compressed.txt", 'ab') as c:
         c.write(compressed)
     c.close()
             
     #DO NEXT TIME figure out how to compress bit strings into bytes 
     #TRY USING SMALLER FILE TO TEST COMPRESSION/DECOMPRESSION
-    
+def step_6(hash_map):
+    decompressed = ''
+    toDecompress = b''
+    with open('compressed.txt', 'rb') as f:
+        read = False
+        for line in f.readlines():
+            if line == b'--HEADER END--\r\n':
+                read = True
+                continue
+            if read:
+                toDecompress += line
+        binary_strings = [bin(byte)[2:] for byte in toDecompress]
+        toDecompress = ' '.join(binary_strings)
+    for i in toDecompress.split(' '):
+        print(hash_map[i])
+
+
 if __name__ == "__main__":
     sorted_freqs = step_one()
     huffman_tree = make_tree_test(sorted_freqs)
     lookup_table = step_three(huffman_tree)
     step_four()
     step_5(lookup_table)
+    #reverse_lookup_table = {value: key for key, value in lookup_table.items()}
+    #step_6(reverse_lookup_table)
     '''test = []
     test.append(["C", 1110])
     test.append(["D", 101])
