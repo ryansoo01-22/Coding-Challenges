@@ -48,4 +48,4 @@ if __name__ == "__main__":
     equation = sys.argv[1]
     toSolve = toPostfix(equation)
     answer = calculator(toSolve)
-    assert answer == 10
+    print(equation + ' = ' + str(answer))
