@@ -1,11 +1,11 @@
 import math
+import sys
 
-
-def toPostfix(equation):
+def toPostfix(toSolve):
     precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
     postfix = []
     stack = []
-    for char in equation:
+    for char in toSolve:
         if char == " ":
             continue
         if char.isalnum():  #operand
@@ -27,9 +27,9 @@ def toPostfix(equation):
     return ''.join(postfix)
         
 
-def calculator(equation):
+def calculator(toSolveuation):
     stack = []
-    for i in equation:
+    for i in toSolveuation:
         if i == '+':
             stack.append(stack.pop() + stack.pop())
         elif i == '-':
@@ -45,7 +45,7 @@ def calculator(equation):
     return stack[-1]
 
 if __name__ == "__main__":
-    first = '(1 + 2) * 3'
-    eq = toPostfix(first)
-    answer = calculator(eq)
-    assert answer == 9
+    equation = sys.argv[1]
+    toSolve = toPostfix(equation)
+    answer = calculator(toSolve)
+    assert answer == 10
