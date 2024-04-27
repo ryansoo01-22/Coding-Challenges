@@ -108,7 +108,7 @@ def make_lookup_table(root, root_val, code, lookup_table):
 
         if root.data:
             #print(root.data, code)
-            lookup_table[root.data] = ''.join(code)
+            lookup_table[root.data] = ''.join(code).encode('utf-8')
             #lookup_table.append([root.data, ''.join(code)])
         
         if root.right:
@@ -145,6 +145,7 @@ def step_5(lookup_table):
             if not i.isalnum():
                 continue
             else:
+                toCompress = bytes(len(lookup_table[i])) + lookup_table[i]
                 decimal = int(lookup_table[i], 2)
                 byte_str = decimal.to_bytes((decimal.bit_length() + 7) // 8, 'big')
                 if byte_str == b'':
@@ -155,7 +156,8 @@ def step_5(lookup_table):
         c.close()
             
     #DO NEXT TIME handle \n characters for new line
-def step_6(rev_lookup_table):
+def step_6():
+    decompressed = ''
     with open('compressed.txt', 'r') as f:
         decompress = False
         line = ''
@@ -168,26 +170,13 @@ def step_6(rev_lookup_table):
             if decompress and i == '\n':
                 continue
             if decompress:
-                i = i.encode('utf-8')  
-                print(reverse_lookup_table[i], end='')
+                i = i.encode('ascii')  
+                decompressed += rev_lookup_table[i]
             if i == '\n':
-                print(line)
                 line = ''
+        print("DECOMPRESSED IS", decompressed)
 
-    
-def make_decode_table(lookup_table):
-    reverse_lookup_table = {}
-    for key, value in lookup_table.items():
-        decimal = int(value, 2)
-        byte_str = decimal.to_bytes((decimal.bit_length() + 7) // 8, 'big')
-        if byte_str == b'':
-            byte_str = b'\x00'
-        reverse_lookup_table[byte_str] = key
-    space_bin = b"100001"
-    decimal = int(space_bin, 2)
-    byte_str = decimal.to_bytes((decimal.bit_length() + 7) // 8, 'big')
-    reverse_lookup_table[byte_str] = ' ' 
-    return reverse_lookup_table
+
 
 if __name__ == "__main__":
     sorted_freqs = step_one()
@@ -195,8 +184,7 @@ if __name__ == "__main__":
     lookup_table = step_three(huffman_tree)
     step_four()
     step_5(lookup_table)
-    reverse_lookup_table = make_decode_table(lookup_table)
-    step_6(reverse_lookup_table)
+    step_6()
     '''test = []
     test.append(["C", 1110])
     test.append(["D", 101])
