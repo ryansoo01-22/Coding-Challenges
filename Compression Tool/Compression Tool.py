@@ -1,5 +1,5 @@
 import collections
-import struct
+import gzip
 import base64
 
 def step_one():
@@ -108,7 +108,7 @@ def make_lookup_table(root, root_val, code, lookup_table):
 
         if root.data:
             #print(root.data, code)
-            lookup_table[root.data] = ''.join(code).encode('utf-8')
+            lookup_table[root.data] = ''.join(code)
             #lookup_table.append([root.data, ''.join(code)])
         
         if root.right:
@@ -138,33 +138,56 @@ def step_5(lookup_table):
         full_text = f.read()
         for i in full_text:
             if i == " ":
-                compressed += b" "
+                space_bin = b"100001"
+                decimal = int(space_bin, 2)
+                byte_str = decimal.to_bytes((decimal.bit_length() + 7) // 8, 'big')
+                compressed += byte_str
+            if not i.isalnum():
                 continue
-            if i in lookup_table:
-                byte_value = int(lookup_table[i], 2).to_bytes((len(lookup_table[i]) + 7) // 8, byteorder='big')
-                compressed += byte_value
-    with open("compressed.txt", 'ab') as c:
-        c.write(compressed)
-    c.close()
+            else:
+                decimal = int(lookup_table[i], 2)
+                byte_str = decimal.to_bytes((decimal.bit_length() + 7) // 8, 'big')
+                if byte_str == b'':
+                    byte_str = b'\x00'
+                compressed += byte_str
+        with open("compressed.txt", 'ab') as c:
+            c.write(compressed)
+        c.close()
             
-    #DO NEXT TIME figure out how to compress bit strings into bytes 
-    #TRY USING SMALLER FILE TO TEST COMPRESSION/DECOMPRESSION
-def step_6(hash_map):
-    decompressed = ''
-    toDecompress = b''
-    with open('compressed.txt', 'rb') as f:
-        read = False
-        for line in f.readlines():
-            if line == b'--HEADER END--\r\n':
-                read = True
+    #DO NEXT TIME handle \n characters for new line
+def step_6(rev_lookup_table):
+    with open('compressed.txt', 'r') as f:
+        decompress = False
+        line = ''
+        full_text = f.read()
+        for i in full_text:
+            line += i
+            if line == '--HEADER END--':
+                decompress = True
                 continue
-            if read:
-                toDecompress += line
-        binary_strings = [bin(byte)[2:] for byte in toDecompress]
-        toDecompress = ' '.join(binary_strings)
-    for i in toDecompress.split(' '):
-        print(hash_map[i])
+            if decompress and i == '\n':
+                continue
+            if decompress:
+                i = i.encode('utf-8')  
+                print(reverse_lookup_table[i], end='')
+            if i == '\n':
+                print(line)
+                line = ''
 
+    
+def make_decode_table(lookup_table):
+    reverse_lookup_table = {}
+    for key, value in lookup_table.items():
+        decimal = int(value, 2)
+        byte_str = decimal.to_bytes((decimal.bit_length() + 7) // 8, 'big')
+        if byte_str == b'':
+            byte_str = b'\x00'
+        reverse_lookup_table[byte_str] = key
+    space_bin = b"100001"
+    decimal = int(space_bin, 2)
+    byte_str = decimal.to_bytes((decimal.bit_length() + 7) // 8, 'big')
+    reverse_lookup_table[byte_str] = ' ' 
+    return reverse_lookup_table
 
 if __name__ == "__main__":
     sorted_freqs = step_one()
@@ -172,8 +195,8 @@ if __name__ == "__main__":
     lookup_table = step_three(huffman_tree)
     step_four()
     step_5(lookup_table)
-    #reverse_lookup_table = {value: key for key, value in lookup_table.items()}
-    #step_6(reverse_lookup_table)
+    reverse_lookup_table = make_decode_table(lookup_table)
+    step_6(reverse_lookup_table)
     '''test = []
     test.append(["C", 1110])
     test.append(["D", 101])
