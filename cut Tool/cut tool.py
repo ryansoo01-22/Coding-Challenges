@@ -23,9 +23,10 @@ def step3(filename, fields):
                 split = line.split(',')
             if '.tsv' in filename:
                 split = line.split('\t')
+            toPrint = ''
             for i in fields:
-                print(split[i], end=', ')
-            print()
+                toPrint += split[i] + ', '
+            print(toPrint[:len(toPrint) - 2])
 
 if __name__ == "__main__":
     fields = [0, 1]
